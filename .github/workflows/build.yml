@@ -32,7 +32,7 @@ jobs:
     if: github.event.repository.owner.id == github.event.sender.id
     strategy:
       matrix:
-        VERSION: [23.05]
+        VERSION: [21.02, 23.05]
         SET: [non-docker]
 
     steps:
@@ -82,12 +82,6 @@ jobs:
         sed -i '1i src-git kenzo https://github.com/kenzok8/openwrt-packages' feeds.conf.default
         sed -i '2i src-git small https://github.com/kenzok8/small' feeds.conf.default
 
-    - name: Upgrade golang version
-      run: |
-        cd project/friendlywrt
-        rm -rf feeds/packages/lang/golang
-        git clone https://github.com/sbwml/packages_lang_golang -b 23.x feeds/packages/lang/golang
-
     - name: Apply customizations
       run: |
         cd project
@@ -113,6 +107,13 @@ jobs:
         make download -j8
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
+  
+    - name: Upgrade golang version
+      run: |
+        cd project/friendlywrt
+        ls -la
+        rm -rf feeds/packages/lang/golang
+        git clone https://github.com/sbwml/packages_lang_golang -b 23.x feeds/packages/lang/golang
 
     - name: Compile friendlyWrt
       id: compile
@@ -155,7 +156,7 @@ jobs:
 
     strategy:
       matrix:
-        VERSION: [23.05]
+        VERSION: [21.02, 23.05]
         CPU: [rk3328, rk3566]
         SET: [non-docker]
     steps:
